@@ -39,7 +39,15 @@ void Driver::open(std::string const& uri)
 
 void Driver::startAcquisition()
 {
-
+    // set a fixed field size for the measurement
+    std::string set_fixed_field = "*0100EW*0100DL=1\n\r";
+    writePacket(reinterpret_cast<uint8_t const*>(set_fixed_field.data()), set_fixed_field.size(), 100);
+    usleep(100000);
+    // add a separator character to the measurement
+    std::string add_separator = "*0100EW*0100SU=1\n\r";
+    writePacket(reinterpret_cast<uint8_t const*>(add_separator.data()), add_separator.size(), 100);
+    usleep(100000);
+    // start continuous measurement
     writePacket(reinterpret_cast<uint8_t const*>("*0100P4\n\r"), 9, 100);
 }
 
