@@ -40,21 +40,21 @@ void Driver::open(std::string const& uri)
 void Driver::startAcquisition()
 {
     // set a fixed field size for the measurement
-    std::string set_fixed_field = "*0100EW*0100DL=1\n\r";
+    std::string set_fixed_field = "*0100EW*0100DL=1\r\n";
     writePacket(reinterpret_cast<uint8_t const*>(set_fixed_field.data()), set_fixed_field.size(), 100);
     usleep(100000);
     // add a separator character to the measurement
-    std::string add_separator = "*0100EW*0100SU=1\n\r";
+    std::string add_separator = "*0100EW*0100SU=1\r\n";
     writePacket(reinterpret_cast<uint8_t const*>(add_separator.data()), add_separator.size(), 100);
     usleep(100000);
     // start continuous measurement
-    writePacket(reinterpret_cast<uint8_t const*>("*0100P4\n\r"), 9, 100);
+    writePacket(reinterpret_cast<uint8_t const*>("*0100P4\r\n"), 9, 100);
 }
 
 void Driver::stopAcquisition()
 {   
     // stop measurement
-    writePacket(reinterpret_cast<uint8_t const*>("*0100P0\n\r"), 9, 100);
+    writePacket(reinterpret_cast<uint8_t const*>("*0100P0\r\n"), 9, 100);
 }
 
 bool Driver::readMeasurement(double &value)
@@ -98,7 +98,7 @@ void Driver::setIntegrationTime(int integration_time){
     if (getOI())
         integration_time = integration_time/2;
     std::stringstream cmd;
-    cmd << "*0100EW*0100PI=" << integration_time << "\n\r";
+    cmd << "*0100EW*0100PI=" << integration_time << "\r\n";
     writePacket(reinterpret_cast<uint8_t const*>(cmd.str().c_str()), cmd.str().length()+2, 100);
     while(!readConfig(PI, integration_time));
 
@@ -108,7 +108,7 @@ int Driver::getIntegrationTime(){
     int pi;
 
     std::stringstream cmd;
-    cmd << "*0100EW*0100PI\n\r";
+    cmd << "*0100EW*0100PI\r\n";
     writePacket(reinterpret_cast<uint8_t const*>(cmd.str().c_str()), cmd.str().length()+2, 100);
     while(!readConfig(PI, pi));
 
@@ -122,7 +122,7 @@ int Driver::getOI(){
     int oi;
 
     std::stringstream cmd;
-    cmd << "*0100EW*0100OI\n\r";
+    cmd << "*0100EW*0100OI\r\n";
     writePacket(reinterpret_cast<uint8_t const*>(cmd.str().c_str()), cmd.str().length()+2, 100);
     while(!readConfig(OI, oi));
 
@@ -134,27 +134,27 @@ Config Driver::getConfig(){
     Config config;
     
     std::stringstream cmd;
-    cmd << "*0100EW*0100PI\n\r";
+    cmd << "*0100EW*0100PI\r\n";
     writePacket(reinterpret_cast<uint8_t const*>(cmd.str().c_str()), cmd.str().length()+2, 100);
     while(!readConfig(PI, config.pi));
 
     cmd.str("");
-    cmd << "*0100EW*0100TI\n\r";
+    cmd << "*0100EW*0100TI\r\n";
     writePacket(reinterpret_cast<uint8_t const*>(cmd.str().c_str()), cmd.str().length()+2, 100);
     while(!readConfig(TI, config.ti));
     
     cmd.str("");
-    cmd << "*0100EW*0100OI\n\r"; 
+    cmd << "*0100EW*0100OI\r\n"; 
     writePacket(reinterpret_cast<uint8_t const*>(cmd.str().c_str()), cmd.str().length()+2, 100);
     while(!readConfig(OI, config.oi));
 
     cmd.str("");
-    cmd << "*0100EW*0100FM\n\r";
+    cmd << "*0100EW*0100FM\r\n";
     writePacket(reinterpret_cast<uint8_t const*>(cmd.str().c_str()), cmd.str().length()+2, 100);
     while(!readConfig(FM, config.fm));
     
     cmd.str("");
-    cmd << "*0100EW*0100UN\n\r";
+    cmd << "*0100EW*0100UN\r\n";
     writePacket(reinterpret_cast<uint8_t const*>(cmd.str().c_str()), cmd.str().length()+2, 100);
     while(!readConfig(UN, config.un));
     
