@@ -51,6 +51,12 @@ void Driver::startAcquisition()
     writePacket(reinterpret_cast<uint8_t const*>("*0100P4\n\r"), 9, 100);
 }
 
+void Driver::stopAcquisition()
+{   
+    // stop measurement
+    writePacket(reinterpret_cast<uint8_t const*>("*0100P0\n\r"), 9, 100);
+}
+
 bool Driver::readMeasurement(double &value)
 {
     base::Time timeout = base::Time().fromSeconds(3);

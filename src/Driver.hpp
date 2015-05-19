@@ -43,6 +43,10 @@ namespace digiquartz_pressure
          * The Devive get the command to send measured Pressure-Values.
          */
         void startAcquisition();
+        
+        /** Stop acquisition
+         */
+        void stopAcquisition();
 
         /** Read available packets on the I/O */
         bool readMeasurement(double &value);
