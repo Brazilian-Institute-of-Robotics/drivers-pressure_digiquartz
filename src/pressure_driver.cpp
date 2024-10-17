@@ -19,24 +19,40 @@ namespace pressure_pkg
     {
     }
 
-    double PressureDriver::getPressure()
+    
+    double PressureDriver::sendCommand()
     {
         const uint8_t command[] = {'*', '0', '1', '0', '0', 'P', '4', '\r', '\n'};
         this->writePacket(command, sizeof(command));
 
         size_t size = this->readPacket(PRESSURE_PACKET, PRESSURE_MAX_PACKET_SIZE);
 
-        // Chama a função extractPacket e armazena o valor retornado
         if (extractPacket(PRESSURE_PACKET, size) == 1)
         {
             return pressure_value_;
         }
         else
         {
-            return 0.0; // Retorna 0 se não conseguiu extrair um valor válido
+            return 0.0;
         }
     }
 
+    bool PressureDriver::read(std::string & response)
+    {
+    std::vector<uint8_t> buffer;
+    buffer.resize(kFinalPosition);
+
+    try {
+        int size = readPacket(&buffer[0], kFinalPosition);
+        std::string raw = std::string(reinterpret_cast<char const *>(&buffer[0]), size);
+        response = parseMessage(raw);
+        return true;
+    } catch (const ros_driver_base::TimeoutError & e) {
+        std::cerr << e.what() << std::endl;
+        return false;
+    }
+    return false;
+    }
 
     float PressureDriver::getTemperature()
     {
@@ -51,27 +67,15 @@ namespace pressure_pkg
 
     int PressureDriver::extractPacket(const uint8_t *buffer, size_t buffer_size) const
     {
-        // std::cout << "buffer value: " << buffer << std::endl;
-        if (buffer[0] != '*')
+        if (buffer[kInitPosition] != kInitMessage)
         {
             return -1;
         }
 
-        if (buffer_size < 18)
+        if (buffer_size < kFinalPosition)
         {
             return 0;
-        }
-
-        std::string str(reinterpret_cast<const char*>(buffer));
-        size_t pos = str.find(pattern_);
-        std::cout << "pos: " << pos << std::endl;
-        if (pos != std::string::npos) {
-            std::string value_str = str.substr(pos + pattern_.length());
-            std::cout << "Pressure: " << value_str << std::endl;
-            pressure_value_ = std::stod(value_str);
-            return 1;
-        }
-                
+        }                
         return -buffer_size;
     }
 

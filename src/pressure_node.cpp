@@ -1,10 +1,3 @@
-#include <chrono>
-#include <functional>
-#include <memory>
-#include <string>
-
-#include "rclcpp/rclcpp.hpp"
-#include "std_msgs/msg/string.hpp"
 #include "pressure_pkg/pressure_driver.hpp"
 
 using namespace std::chrono_literals;
@@ -19,17 +12,18 @@ public:
         timer_ = this->create_wall_timer(
             500ms, std::bind(&MinimalPublisher::timer_callback, this));
         
-        // Inicializa o driver de pressão
         pressure_driver_ = std::make_shared<pressure_pkg::PressureDriver>();
     }
 
 private:
+
     void timer_callback()
     {
         auto message = std_msgs::msg::String();
-        float pressure_value = pressure_driver_->getPressure();
-        message.data = "Pressão: " + std::to_string(pressure_value);
+        std::string response;
+        this->read(response);
         
+        message.data = "Pressão: " + response;
         RCLCPP_INFO(this->get_logger(), "Valor da pressão obtido: '%s'", message.data.c_str());
         publisher_->publish(message);
     }
