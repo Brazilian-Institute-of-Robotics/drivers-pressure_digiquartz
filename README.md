@@ -14,7 +14,7 @@
 
 ## 1. Overview
 
-The `pressure_pkg` is a ROS package designed for interfacing with the Digiquartz pressure sensor. It provides functionalities to configure the sensor, read pressure data, and publish it to ROS topics. This package is essential for applications requiring precise pressure measurements and integrates seamlessly with ROS 2.
+The `drivers-pressure_digiquartz(pressure_pkg)` is a ROS package designed for interfacing with the Digiquartz pressure sensor. It provides functionalities to configure the sensor, read pressure data, and publish it to ROS topics. This package is essential for applications requiring precise pressure measurements and integrates seamlessly with ROS 2.
 
 ```
 📦
@@ -38,7 +38,7 @@ The `pressure_pkg` is a ROS package designed for interfacing with the Digiquartz
 
 - João Pedro Almeida (<joaop.almeida@fbter.org.br>)
 
-The `pressure_pkg` package has been tested under ROS 2 Humble and Ubuntu 22.04. This is research code; expect frequent changes and disclaim any fitness for a particular purpose.
+The `drivers-pressure_digiquartz` package has been tested under ROS 2 Humble and Ubuntu 22.04. This is research code; expect frequent changes and disclaim any fitness for a particular purpose.
 
 | OS | ROS |
 | :---: | :---: |
@@ -73,11 +73,11 @@ The `pressure_pkg` package has been tested under ROS 2 Humble and Ubuntu 22.04. 
    source install/setup.bash
    ```
 
-- Include the `pressure_pkg` in the file `autoproj/manifest` file if it does not exist.
+- Include the `drivers-pressure_digiquartz` in the file `autoproj/manifest` file if it does not exist.
 
    ```yaml
    package_sets:
-     - github: seu_usuario/pressure_pkg
+     - github: Brazilian-Institute-of-Robotics/drivers-pressure_digiquartz
      private: true
 
    layout:
@@ -102,13 +102,6 @@ The `pressure_pkg` package has been tested under ROS 2 Humble and Ubuntu 22.04. 
 To use the Digiquartz pressure sensor with this package, ensure the sensor is properly configured and set up. Please refer to the documentation specific to your sensor model for protocol details.
 
 :warning: **Give permission to your system to access the communication port**
-
-Another common error is the failure to access the communication port. This can be resolved with the command below:
-
-```sh
-sudo usermod -aG dialout $USER
-
-```
 
 ## 4. How to use
 
