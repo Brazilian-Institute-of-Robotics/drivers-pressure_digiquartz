@@ -20,18 +20,14 @@
 #include "ros_driver_base/driver.hpp"
 #include "pressure_pkg/visibility_control.h"
 
-using namespace boost::asio;
-using namespace std;
-
 namespace pressure_pkg
 {
 class PressureDriver : public ros_driver_base::Driver
 {
 public:
-  explicit PressureDriver();
+  PressureDriver();
   virtual ~PressureDriver();
 
-  // Método que envia o comando e retorna o valor da pressão
   double getPressure();
   bool read(std::string & response);
 
@@ -39,8 +35,9 @@ public:
   uint8_t PRESSURE_PACKET[32];
 
 private:
-  std::string pattern_ = "*0001_";
+  boost::asio::io_service io_service_;  // Agora faz parte da classe, não é global
+  std::string pattern_;  // Membro não estático da classe
   int extractPacket(const uint8_t * buffer, size_t buffer_size) const override;
   mutable double pressure_value_ = 0.0;
 };
-}
+}  // namespace pressure_pkg

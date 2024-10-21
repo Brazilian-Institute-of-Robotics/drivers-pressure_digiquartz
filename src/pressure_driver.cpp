@@ -26,7 +26,8 @@ PressureDriver::PressureDriver()
   this->setWriteTimeout(std::chrono::milliseconds(2000));
 }
 
-PressureDriver::~PressureDriver()
+PressureDriver::PressureDriver()
+: ros_driver_base::Driver(PRESSURE_MAX_PACKET_SIZE), pattern_("*0001_")
 {
 }
 
@@ -37,11 +38,10 @@ double PressureDriver::getPressure()
   this->writePacket(command, sizeof(command));
 
   if (read(message)) {
-    // Tentar extrair o valor numérico da string correta (primeira leitura válida)
     try {
       std::cout << "Mensagem recebida: '" << message << "'\n";
 
-      // Remover caracteres extras como \r\n
+
       std::string cleaned_message = message;
       cleaned_message.erase(
         std::remove(
@@ -52,7 +52,7 @@ double PressureDriver::getPressure()
           cleaned_message.begin(),
           cleaned_message.end(), '\n'), cleaned_message.end());
 
-      // Extrair o valor da pressão da mensagem limpa
+
       double pressure_value =
         std::stod(cleaned_message.substr(cleaned_message.find(pattern_) + pattern_.length()));
       std::cout << "Pressure: " << pressure_value << std::endl;
@@ -64,7 +64,6 @@ double PressureDriver::getPressure()
         std::endl;
     }
   }
-
   return 0.1;
 }
 
@@ -98,12 +97,11 @@ int PressureDriver::extractPacket(const uint8_t * buffer, size_t buffer_size) co
 
   size_t pos = str.find(pattern_);
   if (pos != std::string::npos) {
-    std::string value_str = str.substr(pos + pattern_.length(), 10);         // Pegar os 10 caracteres após o padrão
+    std::string value_str = str.substr(pos + pattern_.length(), 10);
     std::cout << "Valor extraído: " << value_str << std::endl;
     pressure_value_ = std::stod(value_str);
     return buffer_size;
   }
-
   return -buffer_size;
 }
-}
+}  // namespace pressure_pkg
