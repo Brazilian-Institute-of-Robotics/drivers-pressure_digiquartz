@@ -20,7 +20,6 @@ The `pressure_pkg` is a ROS package designed for interfacing with the Digiquartz
 📦
  ┣ 📂 config                      # Config files for robot and controllers description
  ┣ 📂 include                     # Executables headers
- ┣ 📂 launch                      # Launch files for control modes and robots
  ┣ 📂 src                         # Executables
  ┣...
  ```
@@ -29,15 +28,15 @@ The `pressure_pkg` is a ROS package designed for interfacing with the Digiquartz
 
 - The source code is released under an [Apache License 2.0](LICENSE).
 
-**Authors (alphabetical):**
+**Authors:**
 
-- [João Pedro Almeida] (<joaop.almeida@fbter.org.br>)
+- João Pedro Almeida (<joaop.almeida@fbter.org.br>)
 
-**Affiliation:** [SENAI CIMATEC]
+**Affiliation:** SENAI CIMATEC
 
-**Maintainers (alphabetical):**
+**Maintainers:**
 
-- [João Pedro Almeida] (<joaop.almeida@fbter.org.br>)
+- João Pedro Almeida (<joaop.almeida@fbter.org.br>)
 
 The `pressure_pkg` package has been tested under ROS 2 Humble and Ubuntu 22.04. This is research code; expect frequent changes and disclaim any fitness for a particular purpose.
 
@@ -55,10 +54,10 @@ The `pressure_pkg` package has been tested under ROS 2 Humble and Ubuntu 22.04. 
 
    ```sh
    cd YOUR_WORKSPACE/src
-   git clone https://github.com/seu_usuario/pressure_pkg.git
+   git clone https://github.com/Brazilian-Institute-of-Robotics/drivers-pressure_digiquartz.git
    cd YOUR_WORKSPACE
    source /opt/ros/${ROS_DISTRO}/setup.bash
-   colcon build --packages-select pressure_pkg --event-handlers console_direct+  
+   colcon build --packages-select pressure_pkg
    ```
 
 ### 3.2 Building from autoproj (recommended)
@@ -113,7 +112,9 @@ sudo usermod -aG dialout $USER
 
 ## 4. How to use
 
-ros2 run pressure_pkg main 
+   ```sh
+   ros2 run pressure_pkg main 
+   ```
 
 ## Bugs & Feature Requests
 
