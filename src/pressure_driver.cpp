@@ -16,8 +16,7 @@ namespace pressure_pkg
     {
     }
 
-    
-    double PressureDriver::sendCommand()
+    double PressureDriver::getPressure()
     {
         std::string message;
         const uint8_t command[] = {'*', '0', '1', '0', '0', 'P', '4', '\r', '\n'};
@@ -81,7 +80,7 @@ namespace pressure_pkg
             return -buffer_size;
         }
 
-        if (buffer_size < kFinalPosition)
+        if (buffer_size < 18)
         {
             return 0;
         }

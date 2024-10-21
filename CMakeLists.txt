@@ -73,7 +73,10 @@ install(DIRECTORY
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
-  set(ament_cmake_cpplint_FOUND TRUE)
+  set(ament_cmake_cppcheck_FOUND TRUE)
+  list(APPEND AMENT_LINT_AUTO_EXCLUDE ament_cmake_cpplint)
+  find_package(ament_cmake_cpplint REQUIRED)
+  ament_cpplint(MAX_LINE_LENGTH "120")
   ament_lint_auto_find_test_dependencies()
 endif()
 
