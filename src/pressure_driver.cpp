@@ -19,15 +19,14 @@
 namespace pressure_pkg
 {
 PressureDriver::PressureDriver()
-: ros_driver_base::Driver(PRESSURE_MAX_PACKET_SIZE)
+: ros_driver_base::Driver(PRESSURE_MAX_PACKET_SIZE), pattern_("*0001_")
 {
   this->openURI("serial:///dev/ttyUSB0:9600");
   this->setReadTimeout(std::chrono::milliseconds(2000));
   this->setWriteTimeout(std::chrono::milliseconds(2000));
 }
 
-PressureDriver::PressureDriver()
-: ros_driver_base::Driver(PRESSURE_MAX_PACKET_SIZE), pattern_("*0001_")
+PressureDriver::~PressureDriver()
 {
 }
 
@@ -39,9 +38,6 @@ double PressureDriver::getPressure()
 
   if (read(message)) {
     try {
-      std::cout << "Mensagem recebida: '" << message << "'\n";
-
-
       std::string cleaned_message = message;
       cleaned_message.erase(
         std::remove(
@@ -55,7 +51,6 @@ double PressureDriver::getPressure()
 
       double pressure_value =
         std::stod(cleaned_message.substr(cleaned_message.find(pattern_) + pattern_.length()));
-      std::cout << "Pressure: " << pressure_value << std::endl;
       return pressure_value;
     } catch (const std::invalid_argument & e) {
       std::cerr << "Erro ao converter a string para double: " << e.what() << std::endl;
@@ -70,12 +65,10 @@ double PressureDriver::getPressure()
 bool PressureDriver::read(std::string & response)
 {
   try {
-    std::array<uint8_t, 32> message;
+    std::array<uint8_t, 32> message = {};
     int bytes_read = readPacket(message.data(), message.size());
     std::string read_response(reinterpret_cast<char const *>(message.data()), bytes_read);
     response = read_response;
-    std::cout << "Bytes lidos: " << bytes_read << "\n";
-    std::cout << "Resposta lida: '" << response << "'\n";
     return true;
   } catch (const ros_driver_base::TimeoutError & e) {
     std::cerr << e.what() << '\n';
@@ -98,7 +91,6 @@ int PressureDriver::extractPacket(const uint8_t * buffer, size_t buffer_size) co
   size_t pos = str.find(pattern_);
   if (pos != std::string::npos) {
     std::string value_str = str.substr(pos + pattern_.length(), 10);
-    std::cout << "Valor extraído: " << value_str << std::endl;
     pressure_value_ = std::stod(value_str);
     return buffer_size;
   }

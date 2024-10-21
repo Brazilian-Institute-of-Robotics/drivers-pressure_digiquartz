@@ -22,7 +22,6 @@ int main(int argc, char ** argv)
   std::ignore = argc;
   std::ignore = argv;
 
-  // Inicializa o driver de pressão
   pressure_pkg::PressureDriver pressure_driver;
 
   double pressure_value{0.0};
