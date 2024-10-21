@@ -1,18 +1,15 @@
 #include "pressure_pkg/pressure_driver.hpp"
-#include <string>
-#include <iostream>
-#include <vector>
-
-using namespace boost::asio;
-using namespace std;
+#include <array>
+#include <algorithm>
 
 namespace pressure_pkg
 {
     PressureDriver::PressureDriver()
-    : ros_driver_base::Driver(PRESSURE_MAX_PACKET_SIZE)
+        : ros_driver_base::Driver(PRESSURE_MAX_PACKET_SIZE)
     {
         this->openURI("serial:///dev/ttyUSB0:9600");
         this->setReadTimeout(std::chrono::milliseconds(2000));
+        this->setWriteTimeout(std::chrono::milliseconds(2000));
     }
 
     PressureDriver::~PressureDriver()
@@ -21,40 +18,66 @@ namespace pressure_pkg
 
     double PressureDriver::getPressure()
     {
+        std::string message;
         const uint8_t command[] = {'*', '0', '1', '0', '0', 'P', '4', '\r', '\n'};
         this->writePacket(command, sizeof(command));
 
-        size_t size = this->readPacket(PRESSURE_PACKET, PRESSURE_MAX_PACKET_SIZE);
+        if (read(message))
+        {
+            // Tentar extrair o valor numérico da string correta (primeira leitura válida)
+            try
+            {
+                std::cout << "Mensagem recebida: '" << message << "'\n";
+                
+                // Remover caracteres extras como \r\n
+                std::string cleaned_message = message;
+                cleaned_message.erase(std::remove(cleaned_message.begin(), cleaned_message.end(), '\r'), cleaned_message.end());
+                cleaned_message.erase(std::remove(cleaned_message.begin(), cleaned_message.end(), '\n'), cleaned_message.end());
 
-        // Chama a função extractPacket e armazena o valor retornado
-        if (extractPacket(PRESSURE_PACKET, size) == 1)
-        {
-            return pressure_value_;
+                // Extrair o valor da pressão da mensagem limpa
+                double pressure_value = std::stod(cleaned_message.substr(cleaned_message.find(pattern_) + pattern_.length()));
+                std::cout << "Pressure: " << pressure_value << std::endl;
+                return pressure_value;
+            }
+            catch (const std::invalid_argument &e)
+            {
+                std::cerr << "Erro ao converter a string para double: " << e.what() << std::endl;
+            }
+            catch (const std::out_of_range &e)
+            {
+                std::cerr << "Erro: valor fora do intervalo ao converter para double: " << e.what() << std::endl;
+            }
         }
-        else
+
+        return 0.1;
+    }
+
+    bool PressureDriver::read(std::string &response)
+    {
+        try
         {
-            return 0.0; // Retorna 0 se não conseguiu extrair um valor válido
+            std::array<uint8_t, 32> message;
+            int bytes_read = readPacket(message.data(), message.size());
+            std::string read_response(reinterpret_cast<char const *>(message.data()), bytes_read);
+            response = read_response;
+            std::cout << "Bytes lidos: " << bytes_read << "\n";
+            std::cout << "Resposta lida: '" << response << "'\n";
+            return true;
+        }
+        catch (const ros_driver_base::TimeoutError &e)
+        {
+            std::cerr << e.what() << '\n';
+            return false;
         }
     }
 
-
-    float PressureDriver::getTemperature()
-    {
-        const uint8_t command[] = {'*', '0', '1', '0', '0', 'Q', '4', '\r', '\n'};
-
-        this->writePacket(command, sizeof(command));
-
-        size_t size = this->readPacket(PRESSURE_PACKET, PRESSURE_MAX_PACKET_SIZE);
-
-        return 0.0;
-    }    
-
     int PressureDriver::extractPacket(const uint8_t *buffer, size_t buffer_size) const
     {
-        // std::cout << "buffer value: " << buffer << std::endl;
+        std::string str(reinterpret_cast<const char *>(buffer));
+
         if (buffer[0] != '*')
         {
-            return -1;
+            return -buffer_size;
         }
 
         if (buffer_size < 18)
@@ -62,17 +85,15 @@ namespace pressure_pkg
             return 0;
         }
 
-        std::string str(reinterpret_cast<const char*>(buffer));
         size_t pos = str.find(pattern_);
-        std::cout << "pos: " << pos << std::endl;
-        if (pos != std::string::npos) {
-            std::string value_str = str.substr(pos + pattern_.length());
-            std::cout << "Pressure: " << value_str << std::endl;
+        if (pos != std::string::npos)
+        {
+            std::string value_str = str.substr(pos + pattern_.length(), 10); // Pegar os 10 caracteres após o padrão
+            std::cout << "Valor extraído: " << value_str << std::endl;
             pressure_value_ = std::stod(value_str);
-            return 1;
+            return buffer_size;
         }
-                
+
         return -buffer_size;
     }
-
 }
