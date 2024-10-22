@@ -4,7 +4,7 @@
   <version>0.0.0</version>
   <description>Pressure driver for reading and managing pressure sensor data.</description>
 
-  <maintainer email="jpedro.amsilva@gmail.com">João Pedro Almeida</maintainer>
+  <maintainer email="joaop.almeida@fbter.org.br">João Pedro Almeida</maintainer>
   <license>MIT</license>
 
   <!-- Build dependencies -->

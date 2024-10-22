@@ -77,13 +77,19 @@ The `drivers-pressure_digiquartz` package has been tested under ROS 2 Humble and
 
    ```yaml
    package_sets:
-     - github: Brazilian-Institute-of-Robotics/drivers-pressure_digiquartz
+     - github: Brazilian-Institute-of-Robotics/bir.flatfish_ros-package_set.git
      private: true
 
    layout:
-     - pressure_pkg
+     - drivers-pressure_digiquartz
    ```
-
+- _overrides.yaml_
+  ```yaml
+   overrides:
+     - Brazilian-Institute-of-Robotics/drivers-pressure_digiquartz:
+       branch: port-to-ros2
+  ```
+ 
 - Update and build the autoproj:
 
    ```bash

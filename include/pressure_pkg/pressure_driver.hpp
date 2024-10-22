@@ -36,8 +36,8 @@ public:
   uint8_t PRESSURE_PACKET[32];
 
 private:
-  boost::asio::io_service io_service_;  // Agora faz parte da classe, não é global
-  std::string pattern_;  // Membro não estático da classe
+  boost::asio::io_service io_service_;
+  std::string pattern_;
   int extractPacket(const uint8_t * buffer, size_t buffer_size) const override;
   mutable double pressure_value_ = 0.0;
 };

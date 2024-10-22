@@ -12,10 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "pressure_pkg/pressure_driver.hpp"
+
+#include <iostream>
 #include <stdexcept>
 #include <string>
-#include <iostream>
-#include "pressure_pkg/pressure_driver.hpp"
 
 int main(int argc, char ** argv)
 {

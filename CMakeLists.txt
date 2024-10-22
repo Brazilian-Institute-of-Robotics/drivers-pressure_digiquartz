@@ -12,34 +12,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.12)
 project(pressure_pkg)
 
-# Compiler options
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# Find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_ros REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(ros_driver_base REQUIRED)
 
-# Add library
 add_library(pressure_driver src/pressure_driver.cpp)
 target_compile_features(pressure_driver PUBLIC c_std_99 cxx_std_20)
 
-# Include directories for the library
 target_include_directories(pressure_driver PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
 )
 
-# Link dependencies for the library
 ament_target_dependencies(
     pressure_driver
     "rclcpp"
@@ -47,14 +42,11 @@ ament_target_dependencies(
     "ros_driver_base"
 )
 
-# Compile definitions for the library
 target_compile_definitions(pressure_driver PRIVATE "PRESSURE_PKG_BUILDING_LIBRARY")
 
-# Add executables
 add_executable(main src/main.cpp)
 add_executable(pressure_node src/pressure_node.cpp)
 
-# Include directories for the executables
 target_include_directories(main PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
@@ -64,16 +56,13 @@ target_include_directories(pressure_node PUBLIC
     $<INSTALL_INTERFACE:include>
 )
 
-# Link libraries to the executables
 target_link_libraries(main pressure_driver)
 target_link_libraries(pressure_node pressure_driver)
 
-# Installation rules for header files
 install(DIRECTORY include/
     DESTINATION include
 )
 
-# Installation rules for the library and executables
 install(TARGETS pressure_driver
     EXPORT export_${PROJECT_NAME}
     ARCHIVE DESTINATION lib
@@ -89,20 +78,24 @@ install(TARGETS pressure_node
     DESTINATION lib/${PROJECT_NAME}
 )
 
-# Installation rules for launch and config files
 install(DIRECTORY
     launch config
     DESTINATION share/${PROJECT_NAME}/
 )
 
-# Testing setup
 if(BUILD_TESTING)
     find_package(ament_lint_auto REQUIRED)
-    set(ament_cmake_cpplint_FOUND TRUE)
+    set(ament_cmake_cppcheck_FOUND TRUE)
+    list(APPEND AMENT_LINT_AUTO_EXCLUDE ament_cmake_cpplint)
+    find_package(ament_cmake_cpplint REQUIRED)
+    ament_cpplint(MAX_LINE_LENGTH "120")
     ament_lint_auto_find_test_dependencies()
 endif()
 
-# Export information for downstream packages
+if(BIR_ENABLE_DOCS)
+    bir_add_doxygen_doc(DOC_TITLE "pressure_pkg") 
+endif()
+
 ament_export_include_directories(include)
 ament_export_libraries(pressure_driver)
 ament_export_targets(export_${PROJECT_NAME})

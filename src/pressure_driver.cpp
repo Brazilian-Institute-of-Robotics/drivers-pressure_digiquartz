@@ -13,8 +13,9 @@
 // limitations under the License.
 
 #include "pressure_pkg/pressure_driver.hpp"
-#include <array>
+
 #include <algorithm>
+#include <array>
 
 namespace pressure_pkg
 {
