@@ -50,31 +50,42 @@ ament_target_dependencies(
 # Compile definitions for the library
 target_compile_definitions(pressure_driver PRIVATE "PRESSURE_PKG_BUILDING_LIBRARY")
 
+# Add executables
+add_executable(main src/main.cpp)
+add_executable(pressure_node src/pressure_node.cpp)
+
+# Include directories for the executables
+target_include_directories(main PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+)
+target_include_directories(pressure_node PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+)
+
+# Link libraries to the executables
+target_link_libraries(main pressure_driver)
+target_link_libraries(pressure_node pressure_driver)
+
 # Installation rules for header files
-install(
-    DIRECTORY include/
+install(DIRECTORY include/
     DESTINATION include
 )
 
-# Installation rules for the library
-install(
-    TARGETS pressure_driver
+# Installation rules for the library and executables
+install(TARGETS pressure_driver
     EXPORT export_${PROJECT_NAME}
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib
     RUNTIME DESTINATION bin
 )
 
-# Add executable
-add_executable(main src/main.cpp)
-target_include_directories(main PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>
-)
-target_link_libraries(main pressure_driver)
-
-# Installation rules for the executable
 install(TARGETS main
+    DESTINATION lib/${PROJECT_NAME}
+)
+
+install(TARGETS pressure_node
     DESTINATION lib/${PROJECT_NAME}
 )
 
