@@ -93,7 +93,7 @@ if(BUILD_TESTING)
 endif()
 
 if(BIR_ENABLE_DOCS)
-    bir_add_doxygen_doc(DOC_TITLE "pressure_sensor_driver")
+    bir_add_doxygen_doc(DOC_TITLE "pressure_pkg")
 endif()
 
 ament_export_include_directories(include)

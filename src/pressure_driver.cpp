@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "pressure_pkg/pressure_driver.hpp"
-
 #include <algorithm>
 #include <array>
+
+#include "pressure_pkg/pressure_driver.hpp"
 
 namespace pressure_pkg
 {

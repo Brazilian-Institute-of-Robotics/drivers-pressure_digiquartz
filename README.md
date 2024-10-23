@@ -20,6 +20,7 @@ The `drivers-pressure_digiquartz(pressure_pkg)` is a ROS package designed for in
 📦
  ┣ 📂 config                      # Config files for robot and controllers description
  ┣ 📂 include                     # Executables headers
+ ┣ 📂 launch                      # Launch files for control modes and robots
  ┣ 📂 src                         # Executables
  ┣...
  ```

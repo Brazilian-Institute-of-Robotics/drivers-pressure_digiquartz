@@ -15,7 +15,7 @@
 
 <package format="3">
   <name>pressure_pkg</name>
-  <version>0.0.0</version>
+  <version>0.1.0</version>
   <description>Pressure driver for reading and managing pressure sensor data.</description>
 
   <maintainer email="joaop.almeida@fbter.org.br">João Pedro Almeida</maintainer>
