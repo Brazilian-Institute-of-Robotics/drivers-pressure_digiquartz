@@ -25,14 +25,35 @@
 #include <std_msgs/msg/float64.hpp>
 #include <std_msgs/msg/string.hpp>
 
+/**
+ * @class PressureNode
+ * @brief Class responsible for publishing pressure data in a ROS 2 environment.
+ * The PressureNode class creates a ROS 2 node that interacts with the PressureDriver to fetch pressure data
+ * and publishes it on a topic as a `std_msgs::msg::Float64` message.
+ */
 class PressureNode : public rclcpp::Node
 {
 public:
+  /**
+   * @brief Construct a new PressureNode object.
+   * Initializes the ROS 2 node, sets up the pressure driver, and starts a timer for periodically publishing pressure data.
+   */
   PressureNode();
 
 private:
+  /**
+   * @brief Timer callback function for publishing pressure data.
+   * This method is called periodically by the ROS 2 timer to fetch the current pressure value using the PressureDriver
+   * and publish it on the designated topic.
+   */
   void timer_callback();
+
+  /**< Shared pointer to the ROS 2 timer object.*/
   rclcpp::TimerBase::SharedPtr timer_;
+
+  /**< Publisher for the pressure data.*/
   rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr pressure_publisher_;
+
+  /**< PressureDriver instance for reading pressure data from the sensor.*/
   pressure_pkg::PressureDriver pressure_driver_;
 };
