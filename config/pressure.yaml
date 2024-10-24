@@ -1,0 +1,4 @@
+pressure_node:
+  ros__parameters:
+    uri: "serial:///dev/ttyUSB0:9600"
+    pressure_request: "*0100P4\r\n"
